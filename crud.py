@@ -1,8 +1,18 @@
 import psycopg2 as pg 
 from datetime import datetime
+import os
 
 conn = pg.connect(database = "postgres", user = "postgres", password = "")
 enl = conn.cursor()
+
+def center_Titles(self):
+    return self.center(80)
+
+def cleanT(operatingSystem):
+    if operatingSystem == 'nt':
+        return os.system("cls")
+    else:
+        return os.system("clear")
 
 def create_table():
     sql = '''CREATE TABLE ESTUDIANTES(
@@ -16,10 +26,10 @@ def create_table():
         enl.execute(sql)
         enl.execute("ALTER TABLE ESTUDIANTES ADD PRIMARY KEY(codigo)")
         conn.commit()
-        print("Tabla creada correctamente")
+        print("Tabla estudiantes creada correctamente")
     except:
         conn.rollback()
-        print("La tabla ya ha sido creada")
+        print("La tabla estudiantes ya habia sido creada")
         
 op = 0
 
@@ -96,7 +106,7 @@ def pg_update():
 
     elif option == 'P' or option == 'p':
         sql_update = "UPDATE ESTUDIANTES SET programa = %s WHERE codigo = %s;"
-        modi = input("ACtualice el programa:").upper()
+        modi = input("Actualice el programa:").upper()
 
     else:
         print("Opcion no valida")
@@ -127,41 +137,54 @@ def pg_delete():
 
 while op != 6:
 
-    print("CRUD BASICO CON POSTGRES")
-    print("1. Crear o reestablecer nueva tabla")
-    print("2. Ingresar un nuevo registro")
-    print("3. Mostrar tabla completa o registro unico")
-    print("4. Actualizar un registro de la tabla")
-    print("5. Eliminar un registro de la tabla")
-    print("6. Salir\n")
-    op = int(input("Seleccione una opcion:"))
+    title = "CRUD BASICO CON POSTGRES".upper()
+    print(center_Titles(title),"\n")
+    print("\t\t1. Crear o reestablecer nueva tabla")
+    print("\t\t2. Ingresar un nuevo registro")
+    print("\t\t3. Mostrar tabla completa o registro unico")
+    print("\t\t4. Actualizar un registro de la tabla")
+    print("\t\t5. Eliminar un registro de la tabla")
+    print("\t\t6. Salir\n")
+    op = int(input("\t\tSeleccione una opcion: "))
+    cleanT(os.name)
 
     if op == 1:
         create_table()
 
     elif op == 2:
-        name = input("Ingrese el nombre:").capitalize()
-        lastname = input("Ingrese el nombre:").capitalize()
-        age = int(input("Ingrese el nombre:"))
-        program = input("Ingrese el nombre:").upper()
+        titleDos = "Ingresar un nuevo registro".upper()
+        print(center_Titles(titleDos),"\n")
+        name = input("\t\tIngrese el nombre:").capitalize()
+        lastname = input("\t\tIngrese el apellido:").capitalize()
+        age = int(input("\t\tIngrese la edad:"))
+        program = input("\t\tIngrese el programa:").upper()
         
         pg_create(name,lastname,age,program)
 
     elif op == 3:
-
+        titleTres = "Mostrar tabla completa o registro unico".upper()
+        print(center_Titles(titleTres),"\n")
         #code_search = input("Ingrese el codigo del registro a consultar:")
         pg_read()
 
     elif op == 4:
+        titleCua = "Ingresar un nuevo registro"
+        print(center_Titles(titleCua),"\n")
         pg_update()
 
     elif op == 5:
+        titleCin = "Ingresar un nuevo registro"
+        print(center_Titles(titleCin),"\n")
         pg_delete()
 
     elif op == 6:
         conn.close()
+        titleSeis = "Ingresar un nuevo registro"
+        print(center_Titles(titleSeis),"\n")
         print("Cerrando conexion con la base de datos...")
 
     else:
+        title_default = "ERROR"
+        print(center_Titles(titleDos),"\n")
         print("Digite una opcion valida")
 
