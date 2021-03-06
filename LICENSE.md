@@ -1,4 +1,4 @@
-[simple crud] Copyright (2021) (Jesser Lemus)(“Licensor”)
+[Simple Crud] Copyright (2021) (Jesser Lemus)
 
 Hippocratic License Version Number: 2.1.
 
