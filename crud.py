@@ -127,6 +127,12 @@ def pg_delete():
 
 while op != 6:
 
+    print("CRUD BASICO CON POSTGRES")
+    print("1. Crear o reestablecer nueva tabla")
+    print("2. Ingresar un nuevo registro")
+    print("3. Mostrar tabla completa o registro unico")
+    print("4. Actualizar un registro de la tabla")
+    print("5. Eliminar un registro de la tabla\n")
     op = int(input("Seleccione una opcion:"))
 
     if op == 1:
