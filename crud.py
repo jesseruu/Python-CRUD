@@ -179,8 +179,6 @@ while op != 6:
 
     elif op == 6:
         conn.close()
-        titleSeis = "Ingresar un nuevo registro"
-        print(center_Titles(titleSeis),"\n")
         print("Cerrando conexion con la base de datos...")
 
     else:
