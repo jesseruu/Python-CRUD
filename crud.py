@@ -132,7 +132,8 @@ while op != 6:
     print("2. Ingresar un nuevo registro")
     print("3. Mostrar tabla completa o registro unico")
     print("4. Actualizar un registro de la tabla")
-    print("5. Eliminar un registro de la tabla\n")
+    print("5. Eliminar un registro de la tabla")
+    print("6. Salir\n")
     op = int(input("Seleccione una opcion:"))
 
     if op == 1:
