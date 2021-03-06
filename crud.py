@@ -5,6 +5,8 @@ import os
 conn = pg.connect(database = "postgres", user = "postgres", password = "")
 enl = conn.cursor()
 
+pretty_Bar = "================================================"
+
 def center_Titles(self):
     return self.center(80)
 
@@ -51,7 +53,7 @@ def code_generator(program):
 def pg_read():
 
     global sql_select, code_search
-    option = input('T = Todos \nU= Uno'
+    option = input('\t\tT = Todos \n\t\tU= Uno'
                    '\n¿Que registros desea mostrar? [T/u]:')
 
     if option == 'T' or option =='t':
@@ -82,45 +84,54 @@ def pg_create(name, lastname, age, program):
 
     enl.execute(sql_insert, (codigoG, name,lastname,age,program))
     conn.commit()
-    print("Estudiante registrado")
+    print("\n",center_Titles(pretty_Bar))
+    print("\t\t Estudiante registrado")
 
 def pg_update():
 
     global sql_update, modi
 
-    cod = input("Digite el codigo del estudiante:")
-    option = input('\nN = Nombre \nA = Apellido \nE= Edad \nPrograma'
-                '\nSeleccione el registro que desea actualizar: [N,A,E,P]:')
-    
-    if option == 'n' or option == 'N':
-        sql_update = "UPDATE ESTUDIANTES SET nombre = %s WHERE codigo = %s;"
-        modi = input("Actualice el nombre del estudiante:").capitalize()
+    cod = input("\t\t Digite el codigo del estudiante:")
+    print("\n",center_Titles(pretty_Bar))
 
-    elif option == 'A' or option == 'a':
-        sql_update = "UPDATE ESTUDIANTES SET apellido = %s WHERE codigo = %s;"
-        modi = input("Actualice el apellido de estudiante:").capitalize
+    sql_select = "SELECT * FROM ESTUDIANTES WHERE codigo =%s"
+    enl.execute(sql_select, (cod,))
 
-    elif option == 'E' or option == 'e':
-        sql_update = "UPDATE ESTUDIANTES SET edad = %s WHERE codigo = %s;"
-        modi = int(input("Actualice la edad del estudiante:"))
+    exist_or_not = enl.fetchall()
 
-    elif option == 'P' or option == 'p':
-        sql_update = "UPDATE ESTUDIANTES SET programa = %s WHERE codigo = %s;"
-        modi = input("Actualice el programa:").upper()
+    if exist_or_not:
 
-    else:
-        print("Opcion no valida")
-        pg_update()
+        option = input('\t\t N = Nombre \n\t\t A = Apellido \n\t\t E = Edad \n\t\t P = Programa'
+                '\n\n\t\t Seleccione una opcion a actualizar: [N,A,E,P]: ')
+        print("\n",center_Titles(pretty_Bar))            
+        
+        if option == 'n' or option == 'N':
+            sql_update = "UPDATE ESTUDIANTES SET nombre = %s WHERE codigo = %s;"
+            modi = input("\t\t Actualice el nombre del estudiante:").capitalize()
 
-    enl.execute(sql_update, (modi, cod,))
-    enl.execute("SELECT * FROM ESTUDIANTES WHERE codigo = %s", (cod,))
-    
-    try:
-        enl.fetchone()
+        elif option == 'A' or option == 'a':
+            sql_update = "UPDATE ESTUDIANTES SET apellido = %s WHERE codigo = %s;"
+            modi = input("\t\t Actualice el apellido de estudiante:").capitalize
+
+        elif option == 'E' or option == 'e':
+            sql_update = "UPDATE ESTUDIANTES SET edad = %s WHERE codigo = %s;"
+            modi = int(input("\t\t Actualice la edad del estudiante:"))
+
+        elif option == 'P' or option == 'p':
+            sql_update = "UPDATE ESTUDIANTES SET programa = %s WHERE codigo = %s;"
+            modi = input("\t\t Actualice el programa:").upper()
+
+        else:
+            print("\t\tOpcion no valida")
+            print("\n",center_Titles(pretty_Bar))
+            pg_update()
+
+        enl.execute(sql_update, (modi, cod,))
         conn.commit()
-    except:
-        conn.rollback()
-        print("El registro no existe")   
+
+    if not exist_or_not:
+        print("\t\t El estudiante no existe")
+    
 
 def pg_delete():
     sql_select_elim = "DELETE FROM ESTUDIANTES WHERE codigo = %s;"
@@ -137,6 +148,7 @@ def pg_delete():
 
 while op != 6:
 
+    print("\n",center_Titles(pretty_Bar),"\n")
     title = "CRUD BASICO CON POSTGRES".upper()
     print(center_Titles(title),"\n")
     print("\t\t1. Crear o reestablecer nueva tabla")
@@ -145,6 +157,7 @@ while op != 6:
     print("\t\t4. Actualizar un registro de la tabla")
     print("\t\t5. Eliminar un registro de la tabla")
     print("\t\t6. Salir\n")
+    print(center_Titles(pretty_Bar),"\n")
     op = int(input("\t\tSeleccione una opcion: "))
     cleanT(os.name)
 
@@ -152,14 +165,17 @@ while op != 6:
         create_table()
 
     elif op == 2:
+
         titleDos = "Ingresar un nuevo registro".upper()
-        print(center_Titles(titleDos),"\n")
+        print("\n",center_Titles(titleDos),"\n")
         name = input("\t\tIngrese el nombre:").capitalize()
         lastname = input("\t\tIngrese el apellido:").capitalize()
         age = int(input("\t\tIngrese la edad:"))
         program = input("\t\tIngrese el programa:").upper()
-        
+
+        cleanT(os.name)
         pg_create(name,lastname,age,program)
+
 
     elif op == 3:
         titleTres = "Mostrar tabla completa o registro unico".upper()
@@ -168,12 +184,12 @@ while op != 6:
         pg_read()
 
     elif op == 4:
-        titleCua = "Ingresar un nuevo registro"
+        titleCua = "Ingresar un nuevo registro".upper()
         print(center_Titles(titleCua),"\n")
         pg_update()
 
     elif op == 5:
-        titleCin = "Ingresar un nuevo registro"
+        titleCin = "Ingresar un nuevo registro".upper()
         print(center_Titles(titleCin),"\n")
         pg_delete()
 
