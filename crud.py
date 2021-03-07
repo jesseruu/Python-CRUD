@@ -71,7 +71,7 @@ def pg_read():
 
     elif option == 'U' or option == 'u':
         sql_select = "SELECT * FROM ESTUDIANTES WHERE codigo = %s;"
-        code_search = input("\t\tIngrese el codigo del estudiante a consultar: ")
+        code_search = input("\t\t Ingrese el codigo del estudiante a consultar: ")
         enl.execute(sql_select,(code_search,))
 
     imprim_regist = enl.fetchall()
@@ -182,7 +182,7 @@ while op != '6':
 
     print("")
     print(center_Titles(pretty_Bar),"\n")
-    title = "CRUD BASICO CON POSTGRES".upper()
+    title = "CRUD BASICO CON POSTGRES"
     print(center_Titles(title),"\n")
     print("\t\t1. Crear o reestablecer nueva tabla")
     print("\t\t2. Ingresar un nuevo registro")
