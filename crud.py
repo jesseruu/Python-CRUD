@@ -4,9 +4,22 @@ import os
 
 conn = pg.connect(database = "postgres", user = "postgres", password = "")
 enl = conn.cursor()
+conn.set_session(autocommit = True)
 
 pretty_Bar = "================================================"
 
+op = 0
+
+def table_exist():
+    sql_check = "SELECT * FROM ESTUDIANTES"
+
+    try:
+
+        enl.execute(sql_check)
+        return True
+    except:
+        return False
+        
 def center_Titles(self):
     return self.center(80)
 
@@ -24,17 +37,13 @@ def create_table():
         Edad INT,
         Programa VARCHAR(20))'''
 
-    try:
-        enl.execute(sql)
-        enl.execute("ALTER TABLE ESTUDIANTES ADD PRIMARY KEY(codigo)")
-        conn.commit()
-        print("Tabla estudiantes creada correctamente")
-    except:
-        conn.rollback()
-        print("La tabla estudiantes ya habia sido creada")
-        
-op = 0
+    enl.execute(sql)
+    enl.execute("ALTER TABLE ESTUDIANTES ADD PRIMARY KEY(codigo)")
+    conn.commit()
 
+    print(center_Titles(pretty_Bar))
+    print("\t\t Tabla estudiantes creada correctamente")
+        
 def code_generator(program):
     aux = datetime.now()
 
@@ -53,8 +62,8 @@ def code_generator(program):
 def pg_read():
 
     global sql_select, code_search
-    option = input('\t\tT = Todos \n\t\tU= Uno'
-                   '\n¿Que registros desea mostrar? [T/u]:')
+    option = input('\t\t T = Todos \n\t\t U = Uno'
+                   '\n\n\t\t ¿Que registros desea mostrar? [T/u]: ')
 
     if option == 'T' or option =='t':
         sql_select = "SELECT * FROM ESTUDIANTES"
@@ -62,20 +71,24 @@ def pg_read():
 
     elif option == 'U' or option == 'u':
         sql_select = "SELECT * FROM ESTUDIANTES WHERE codigo = %s;"
-        code_search = input("Ingrese el codigo del estudiante a consultar:")
+        code_search = input("\t\tIngrese el codigo del estudiante a consultar: ")
         enl.execute(sql_select,(code_search,))
-
 
     imprim_regist = enl.fetchall()
 
-    if imprim_regist:
-        for i in imprim_regist:
-            print(i) 
-    if not imprim_regist:
-        print("El estudiante no existe")
-    
-    
+    cleanT(os.name)
 
+    if imprim_regist:
+        print(center_Titles(pretty_Bar))
+        print("\t\t Codigo \t Nombre  Apellido Edad Programa\n")
+        for i in imprim_regist:
+
+            print("\t\t",i) 
+
+    if not imprim_regist:
+        print(center_Titles(pretty_Bar))
+        print("\t\t No hay estudiantes que cumplan las condiciones")
+    
 def pg_create(name, lastname, age, program):
     sql_insert = '''INSERT INTO ESTUDIANTES (codigo, nombre, apellido, edad, programa)
                     VALUES (%s, %s, %s, %s, %s);'''
@@ -84,15 +97,16 @@ def pg_create(name, lastname, age, program):
 
     enl.execute(sql_insert, (codigoG, name,lastname,age,program))
     conn.commit()
-    print("\n",center_Titles(pretty_Bar))
+    print(center_Titles(pretty_Bar))
     print("\t\t Estudiante registrado")
 
 def pg_update():
 
     global sql_update, modi
 
-    cod = input("\t\t Digite el codigo del estudiante:")
-    print("\n",center_Titles(pretty_Bar))
+    cod = input("\t\t Digite el codigo del estudiante: ")
+    print("")
+    print(center_Titles(pretty_Bar))
 
     sql_select = "SELECT * FROM ESTUDIANTES WHERE codigo =%s"
     enl.execute(sql_select, (cod,))
@@ -107,19 +121,19 @@ def pg_update():
         
         if option == 'n' or option == 'N':
             sql_update = "UPDATE ESTUDIANTES SET nombre = %s WHERE codigo = %s;"
-            modi = input("\t\t Actualice el nombre del estudiante:").capitalize()
+            modi = input("\t\t Actualice el nombre del estudiante: ").capitalize()
 
         elif option == 'A' or option == 'a':
             sql_update = "UPDATE ESTUDIANTES SET apellido = %s WHERE codigo = %s;"
-            modi = input("\t\t Actualice el apellido de estudiante:").capitalize
+            modi = input("\t\t Actualice el apellido de estudiante: ").capitalize
 
         elif option == 'E' or option == 'e':
             sql_update = "UPDATE ESTUDIANTES SET edad = %s WHERE codigo = %s;"
-            modi = int(input("\t\t Actualice la edad del estudiante:"))
+            modi = int(input("\t\t Actualice la edad del estudiante: "))
 
         elif option == 'P' or option == 'p':
             sql_update = "UPDATE ESTUDIANTES SET programa = %s WHERE codigo = %s;"
-            modi = input("\t\t Actualice el programa:").upper()
+            modi = input("\t\t Actualice el programa: ").upper()
 
         else:
             print("\t\tOpcion no valida")
@@ -128,27 +142,46 @@ def pg_update():
 
         enl.execute(sql_update, (modi, cod,))
         conn.commit()
+        cleanT(os.name)
+        print(center_Titles(pretty_Bar))
+        print("\t\t El estudiante ha sido actualizado")
 
     if not exist_or_not:
+        cleanT(os.name)
+        print(center_Titles(pretty_Bar))
         print("\t\t El estudiante no existe")
     
 
 def pg_delete():
-    sql_select_elim = "DELETE FROM ESTUDIANTES WHERE codigo = %s;"
-    select_registro = input("Ingrese el codigo del registro a eliminar:")
 
-    enl.execute(sql_select_elim,(select_registro,))
-    
-    try:
-        enl.fetchone()
+    sql_select = "SELECT * FROM ESTUDIANTES WHERE codigo =%s"
+    select_registro = input("\t\t Ingrese el codigo del registro a eliminar: ")
+    enl.execute(sql_select, (select_registro,))
+
+    exist_or_not = enl.fetchall()
+
+    if exist_or_not:
+
+        sql_select_elim = "DELETE FROM ESTUDIANTES WHERE codigo = %s;"
+
+        enl.execute(sql_select_elim,(select_registro,))
         conn.commit()
-    except:
-        conn.rollback()
-        print("El registro no existe")   
 
-while op != 6:
+        cleanT(os.name)
 
-    print("\n",center_Titles(pretty_Bar),"\n")
+        print(center_Titles(pretty_Bar))
+        print("\t\tEl estudiante ha sido eliminado")  
+    
+    if not exist_or_not:
+
+        cleanT(os.name)
+        print(center_Titles(pretty_Bar))
+        print("\t\tEl estudiante no existe") 
+
+while op != '6':
+
+    print("")
+    print(center_Titles(pretty_Bar),"\n")
     title = "CRUD BASICO CON POSTGRES".upper()
     print(center_Titles(title),"\n")
     print("\t\t1. Crear o reestablecer nueva tabla")
@@ -158,47 +191,73 @@ while op != 6:
     print("\t\t5. Eliminar un registro de la tabla")
     print("\t\t6. Salir\n")
     print(center_Titles(pretty_Bar),"\n")
-    op = int(input("\t\tSeleccione una opcion: "))
+
+    op = input("\t\tSeleccione una opcion: ")
     cleanT(os.name)
+        
+    if op == '1':
 
-    if op == 1:
-        create_table()
+        if table_exist() == True:
 
-    elif op == 2:
+            print(center_Titles(pretty_Bar))
+            print("\t\t La tabla ya ha sido creada")
+        else:
+            create_table()
+
+    elif op == '2':
 
         titleDos = "Ingresar un nuevo registro".upper()
         print("\n",center_Titles(titleDos),"\n")
-        name = input("\t\tIngrese el nombre:").capitalize()
-        lastname = input("\t\tIngrese el apellido:").capitalize()
-        age = int(input("\t\tIngrese la edad:"))
-        program = input("\t\tIngrese el programa:").upper()
 
-        cleanT(os.name)
-        pg_create(name,lastname,age,program)
+        if table_exist() == True:
 
+            name = input("\t\tIngrese el nombre: ").capitalize()
+            lastname = input("\t\tIngrese el apellido: ").capitalize()
+            age = int(input("\t\tIngrese la edad: "))
+            program = input("\t\tIngrese el programa: ").upper()
+            
+            cleanT(os.name)
+            pg_create(name,lastname,age,program)
+        else:
+            print(center_Titles(pretty_Bar))
+            print("\t\t La tabla no existe, seleccione la opcion uno\n\t\t para crear una nueva")   
 
-    elif op == 3:
+    elif op == '3':
+
         titleTres = "Mostrar tabla completa o registro unico".upper()
-        print(center_Titles(titleTres),"\n")
-        #code_search = input("Ingrese el codigo del registro a consultar:")
-        pg_read()
+        print("\n",center_Titles(titleTres),"\n")
 
-    elif op == 4:
-        titleCua = "Ingresar un nuevo registro".upper()
-        print(center_Titles(titleCua),"\n")
-        pg_update()
+        if table_exist() == True:
+            pg_read()
+        else:
+            print(center_Titles(pretty_Bar))
+            print("\t\t La tabla no existe, seleccione la opcion uno\n\t\t para crear una nueva")
 
-    elif op == 5:
-        titleCin = "Ingresar un nuevo registro".upper()
-        print(center_Titles(titleCin),"\n")
-        pg_delete()
+    elif op == '4':
 
-    elif op == 6:
+        titleCua = "Actualizar un registro de la tabla".upper()
+        print("\n",center_Titles(titleCua),"\n")
+
+        if table_exist() == True:
+            pg_update()
+        else:
+            print(center_Titles(pretty_Bar))
+            print("\t\t La tabla no existe, seleccione la opcion uno\n\t\t para crear una nueva")
+
+    elif op == '5':
+        titleCin = "Eliminar un registro de la tabla".upper()
+        print("\n",center_Titles(titleCin),"\n")
+
+        if table_exist() == True:
+            pg_delete()
+        else:
+            print(center_Titles(pretty_Bar))
+            print("\t\t La tabla no existe, seleccione la opcion uno\n\t\t para crear una nueva")
+
+    elif op == '6':
         conn.close()
         print("Cerrando conexion con la base de datos...")
 
     else:
-        title_default = "ERROR"
-        print(center_Titles(titleDos),"\n")
-        print("Digite una opcion valida")
-
+        print(center_Titles(pretty_Bar),"\n")
+        print("\n\t\t Digite una opcion valida")
