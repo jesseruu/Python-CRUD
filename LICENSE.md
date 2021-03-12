@@ -1,6 +1,6 @@
-Simple Crud Copyright (2021) (Jesser Lemus)
+[Simple Crud] Copyright 2021 Jesser Lemus
 
-# Hippocratic License Version Number: 2.1.
+Hippocratic License Version Number: 2.1.
 
 Purpose. The purpose of this License is for the Licensor named above to permit the Licensee (as defined below) broad permission, if consistent with Human Rights Laws and Human Rights Principles (as each is defined below), to use and work with the Software (as defined below) within the full scope of Licensor’s copyright and patent rights, if any, in the Software, while ensuring attribution and protecting the Licensor from liability.
 
